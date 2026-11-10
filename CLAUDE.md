@@ -12,7 +12,7 @@ Public repository of Claude plugins by Smirnov Labs, published to Anthropic's pl
    - `skills/<skill>/SKILL.md`, where the folder name matches the skill's `name`.
 2. Add the plugin to `.claude-plugin/marketplace.json` with `"source": "./plugins/<name>"`.
 3. Add a row to the table in `README.md`. Its button links to `https://claude.ai/customize/plugins/new?marketplace=issmirnov/claude-skills&plugin=<name>`.
-4. Run `claude plugin validate .` and `claude plugin validate ./plugins/<name>`.
+4. Run `claude plugin validate .` and `claude plugin validate --profile directory --strict ./plugins/<name>`.
 5. Run `detect-secrets scan` and read the added lines for client names, internal hosts, private IPs and home paths, since the repository is public.
 
 Keep these out of each plugin folder: a `bin/` directory, symlinks, zips and binaries other than images. claude.ai won't install a plugin that has a `bin/` directory. Raise `version` in `plugin.json` with every change to a published plugin.
