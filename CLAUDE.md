@@ -10,13 +10,13 @@ Public repository of Claude plugins by Smirnov Labs, published to Anthropic's pl
    - `README.md` of at least 40 words outside code blocks, covering what the plugin does, how to use it and what data it sends. The directory shows it as the listing description.
    - `LICENSE`.
    - `skills/<skill>/SKILL.md`, where the folder name matches the skill's `name`. Put its `description` in double quotes: the directory's YAML parser flags an unquoted value that contains a colon followed by a space.
-   - Any code the skill runs, in `skills/<skill>/scripts/`, called as `python3 ${CLAUDE_SKILL_DIR}/scripts/<file>`. The directory flags a download piped into an interpreter, such as `curl ... | python3`, as download-and-execute.
+   - No scripts. The directory refuses scripts from an organization that isn't Verified, and ours isn't. It accepts only Markdown, text, JSON, YAML and PNG, JPEG, GIF, WebP or ICO images, and nothing that starts with `#!`. Put commands in `SKILL.md` code blocks instead. Don't pipe a download into an interpreter, such as `curl ... | python3`, because the scan warns on that as download-and-execute.
 2. Add the plugin to `.claude-plugin/marketplace.json` with `"source": "./plugins/<name>"`.
 3. Add a row to the table in `README.md`. Its button links to `https://claude.ai/customize/plugins/new?marketplace=issmirnov/claude-skills&plugin=<name>`.
 4. Run `claude plugin validate .` and `claude plugin validate --profile directory --strict ./plugins/<name>`.
 5. Run `detect-secrets scan` and read the added lines for client names, internal hosts, private IPs and home paths, since the repository is public.
 
-Keep these out of each plugin folder: a `bin/` directory, symlinks, zips and binaries other than images. claude.ai won't install a plugin that has a `bin/` directory. Raise `version` in `plugin.json` with every change to a published plugin.
+Keep these out of each plugin folder: a `bin/` directory, symlinks and package-manager configuration files. claude.ai won't install a plugin that has a `bin/` directory. Raise `version` in `plugin.json` with every change to a published plugin.
 
 ## Submit to the directory
 

@@ -23,11 +23,11 @@ The skill vets businesses. It looks at people only in their business role, and i
 
 ## Requirements
 
-Claude needs web search and web fetch. The domain and mail checks run two small Python scripts in Claude's code sandbox, so code execution must be on. The sandbox's network settings must also allow the hosts listed under Data. If a check can't run, Claude says so and marks that finding unverified instead of guessing.
+Claude needs web search and web fetch. The domain and mail checks run `curl` in Claude's code sandbox, so code execution must be on. The sandbox's network settings must also allow the hosts listed under Data. If a check can't run, Claude says so and marks that finding unverified instead of guessing.
 
 ## Data
 
-The plugin has no connectors and stores nothing. Its two scripts, `rdap.py` and `dns.py`, use only Python's standard library. They contact only the RDAP and DNS servers below. While it works, Claude sends these:
+The plugin has no connectors or scripts, and it stores nothing. While it works, Claude sends these:
 
 - The domain name, to RDAP servers and to Cloudflare's DNS-over-HTTPS service at cloudflare-dns.com. The RDAP server is rdap.verisign.com for `.com` and `.net` domains. For other domains it is rdap.org, which redirects to the domain's registry.
 - Search queries with the company's name, the names of people the site lists and short quotes from its pages, through Claude's web search.

@@ -36,15 +36,21 @@ Read the returned markup, not just the prose. In a fabricated site, the best evi
 
 ## Step 2: Domain age and registration
 
-`whois` on port 43 is often blocked or times out in Claude's code sandbox. Use RDAP over HTTPS instead, because it is faster and returns structured data. Run the script in this skill's `scripts/` folder:
+`whois` on port 43 is often blocked or times out in Claude's code sandbox. Use RDAP over HTTPS instead, because it is faster and returns structured JSON. For a `.com` domain, ask Verisign's RDAP server:
 
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/rdap.py EXAMPLE.com
+curl -sSL --max-time 30 -w '\nHTTP %{http_code}\n' "https://rdap.verisign.com/com/v1/domain/EXAMPLE.com"
 ```
 
-The script asks Verisign's RDAP server about `.com` and `.net` domains, and rdap.org about all others. rdap.org redirects to the right registry. The script prints the registrar, the registration events, the nameservers and the status.
+For a `.net` domain, use `/net/` in place of `/com/`. For any other domain, use `https://rdap.org/domain/EXAMPLE.tld`. rdap.org redirects to the right registry, and `-L` follows the redirect.
 
-If the script reports a failure, or says that rdap.org has no record, search the web for the domain's registration record. Cite the source you used. If that fails too, report the domain's age as unverified and say why. Don't estimate it.
+The last line of the output is the HTTP status:
+
+- `HTTP 200`: the JSON holds `events` (registration, expiration, last changed), `nameservers`, `status` and the entity whose role is `registrar`.
+- `HTTP 404` from Verisign: the domain is probably not registered. curl can also print a connection error here, but the status line still holds.
+- `HTTP 404` from rdap.org: read the `title`. If it says no RDAP service is known, the registry has no RDAP, so the age is unverified. Otherwise the domain is probably not registered.
+
+If the lookup fails or the age is unverified, search the web for the domain's registration record. Cite the source you used. If that fails too, report the domain's age as unverified and say why. Don't estimate it.
 
 What to read from the result:
 
@@ -57,13 +63,25 @@ Run RDAP on every related domain you find in Step 4. Registration dates in a tig
 
 ## Step 3: Mail infrastructure
 
-Query DNS over HTTPS, because the sandbox often lacks `dig`. The script in this skill's `scripts/` folder asks Cloudflare's public resolver for the MX, TXT and A records. It then asks for the TXT record at `_dmarc.EXAMPLE.com`, where DMARC lives:
+Query DNS over HTTPS, because the sandbox often lacks `dig`. These commands ask Cloudflare's public resolver for the MX, TXT and A records. The last one asks for the TXT record at `_dmarc.EXAMPLE.com`, where DMARC lives:
 
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/dns.py EXAMPLE.com
+for t in MX TXT A; do
+  echo "=== $t ==="
+  curl -sS --max-time 15 -H "accept: application/dns-json" "https://cloudflare-dns.com/dns-query?name=EXAMPLE.com&type=$t"; echo
+done
+echo "=== DMARC ==="
+curl -sS --max-time 15 -H "accept: application/dns-json" "https://cloudflare-dns.com/dns-query?name=_dmarc.EXAMPLE.com&type=TXT"; echo
 ```
 
-The domain's own TXT answer shows SPF. `(none)` means the resolver answered with no records. `lookup failed` means the query got no answer, so report those records as unchecked. An MX record of `0 .` is a null MX: the domain states that it accepts no mail.
+Each answer is a short JSON object:
+
+- `"Status": 0` with an `Answer` list gives the records. The domain's own TXT records include SPF.
+- `"Status": 0` with no `Answer` means there are no records of that type.
+- `"Status": 3` means the name does not exist.
+- A curl error means the lookup got no answer. Report those records as unchecked.
+
+An MX record of `0 .` is a null MX: the domain states that it accepts no mail.
 
 Interpretation:
 

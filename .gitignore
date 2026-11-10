@@ -9,7 +9,3 @@ dist/
 Thumbs.db
 desktop.ini
 __MACOSX/
-
-# Python bytecode from running skill scripts locally
-__pycache__/
-*.pyc

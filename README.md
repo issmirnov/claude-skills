@@ -33,7 +33,7 @@ Add the marketplace once, then install the plugins you want:
 
 ## Data
 
-Each plugin's README says what it sends and stores. SMART Goals Coach is instructions only: it has no connectors or scripts and sends nothing to any outside service. Counterparty Vetting has no connectors. Its two small scripts look up the domain with public RDAP and DNS services, and Claude searches the web for the company and its people. [Its README](plugins/vet-counterparty/README.md#data) lists what goes where.
+Each plugin's README says what it sends and stores. SMART Goals Coach is instructions only: it has no connectors or scripts and sends nothing to any outside service. Counterparty Vetting has no connectors or scripts either. It does have Claude look up the domain with public RDAP and DNS services, and search the web for the company and its people. [Its README](plugins/vet-counterparty/README.md#data) lists what goes where.
 
 ## License
 
