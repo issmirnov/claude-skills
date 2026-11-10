@@ -1,0 +1,11 @@
+# Built packages go to GitHub releases, not the repo
+dist/
+*.zip
+*.skill
+*.plugin
+
+# OS files that fail Anthropic's directory validation
+.DS_Store
+Thumbs.db
+desktop.ini
+__MACOSX/

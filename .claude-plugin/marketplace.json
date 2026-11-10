@@ -1,0 +1,13 @@
+{
+  "name": "smirnov-labs",
+  "owner": { "name": "Smirnov Labs" },
+  "description": "Skills for Claude from Smirnov Labs, packaged as plugins.",
+  "plugins": [
+    {
+      "name": "smart-goals-coach",
+      "source": "./plugins/smart-goals-coach",
+      "description": "A guided coaching session that turns a fuzzy wish into one to three SMART goals you can start this week, with a goal card, first step and if-then plan.",
+      "category": "productivity"
+    }
+  ]
+}

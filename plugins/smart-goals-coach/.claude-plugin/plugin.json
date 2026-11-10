@@ -1,0 +1,10 @@
+{
+  "name": "smart-goals-coach",
+  "displayName": "SMART Goals Coach",
+  "version": "1.0.0",
+  "description": "A guided coaching session that turns a fuzzy wish into one to three SMART goals you can start this week, with a goal card, first step and if-then plan.",
+  "author": { "name": "Smirnov Labs" },
+  "license": "MIT",
+  "keywords": ["goals", "smart-goals", "coaching", "planning", "productivity"],
+  "icon": "./icon.png"
+}
