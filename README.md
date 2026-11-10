@@ -5,6 +5,7 @@ Skills for Claude, packaged as plugins. Each plugin under [`plugins/`](plugins/)
 | Plugin | What it does | Add it |
 | --- | --- | --- |
 | [SMART Goals Coach](plugins/smart-goals-coach/) | Turns a fuzzy wish into one to three goals you can start this week, with a goal card, a first step and an if-then plan. | [![Add SMART Goals Coach to Claude](https://img.shields.io/badge/Add_to_Claude-B05730?style=for-the-badge)](https://claude.ai/customize/plugins/new?marketplace=issmirnov/claude-skills&plugin=smart-goals-coach) |
+| [Counterparty Vetting](plugins/vet-counterparty/) | Checks whether an unfamiliar company, vendor or cold-email sender is what it claims to be, and shows the evidence. It is research, not a guarantee. | [![Add Counterparty Vetting to Claude](https://img.shields.io/badge/Add_to_Claude-B05730?style=for-the-badge)](https://claude.ai/customize/plugins/new?marketplace=issmirnov/claude-skills&plugin=vet-counterparty) |
 
 ## Add a plugin on claude.ai or the desktop app
 
@@ -22,14 +23,17 @@ Plugins need a Pro, Max, Ultra, Team or Enterprise plan. Turn on **Code executio
 
 ## Add a plugin in Claude Code
 
+Add the marketplace once, then install the plugins you want:
+
 ```
 /plugin marketplace add issmirnov/claude-skills
 /plugin install smart-goals-coach@smirnov-labs
+/plugin install vet-counterparty@smirnov-labs
 ```
 
 ## Data
 
-Each plugin's README says what it sends and stores. SMART Goals Coach is instructions only: it has no connectors or scripts and sends nothing to any outside service.
+Each plugin's README says what it sends and stores. SMART Goals Coach is instructions only: it has no connectors or scripts and sends nothing to any outside service. Counterparty Vetting has no connectors or scripts either. It does have Claude look up the domain with public RDAP and DNS services, and search the web for the company and its people. [Its README](plugins/vet-counterparty/README.md#data) lists what goes where.
 
 ## License
 

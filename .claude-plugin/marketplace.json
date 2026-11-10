@@ -8,6 +8,12 @@
       "source": "./plugins/smart-goals-coach",
       "description": "A guided coaching session that turns a fuzzy wish into one to three SMART goals you can start this week, with a goal card, first step and if-then plan.",
       "category": "productivity"
+    },
+    {
+      "name": "vet-counterparty",
+      "source": "./plugins/vet-counterparty",
+      "description": "Checks whether an unfamiliar company, vendor or cold-email sender is what it claims to be. Claude looks up the domain's age and mail records, searches for copied website text, reviews and named people, and gives a verdict with the evidence behind it.",
+      "category": "research"
     }
   ]
 }
