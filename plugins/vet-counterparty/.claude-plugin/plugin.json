@@ -1,7 +1,7 @@
 {
   "name": "vet-counterparty",
   "displayName": "Counterparty Vetting",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Checks whether an unfamiliar company, vendor or cold-email sender is what it claims to be. Claude looks up the domain's age and mail records, searches for copied website text, reviews and named people, and gives a verdict with the evidence behind it.",
   "author": { "name": "Smirnov Labs" },
   "license": "MIT",

@@ -1,6 +1,6 @@
 ---
 name: vet-counterparty
-description: Due-diligence workflow for vetting an unfamiliar company, domain, agency, vendor, subcontractor or cold-outreach sender. It checks domain age through RDAP and the domain's mail records, then searches for marketing copy reused on other sites, for independent reviews, and for real people and a registered entity behind the business. Use it when someone asks whether a company is legit or a scam. Use it when they paste a URL or company name from an unsolicited email, LinkedIn message or DM and ask for research. Use it when they evaluate a vendor, agency, subcontractor or partner they have no history with, or ask how old a domain is, who is behind a site, or whether reviews exist. Trigger on casual phrasing too ('is this real?', 'should I reply to this?', 'who are these guys?'). If they ask for only one piece, such as domain age, still run the full sequence: each signal is weak alone, and together they usually settle the question.
+description: "Due-diligence workflow for vetting an unfamiliar company, domain, agency, vendor, subcontractor or cold-outreach sender. It checks domain age through RDAP and the domain's mail records, then searches for marketing copy reused on other sites, for independent reviews, and for real people and a registered entity behind the business. Use it when someone asks whether a company is legit or a scam. Use it when they paste a URL or company name from an unsolicited email, LinkedIn message or DM and ask for research. Use it when they evaluate a vendor, agency, subcontractor or partner they have no history with, or ask how old a domain is, who is behind a site, or whether reviews exist. Trigger on casual phrasing too ('is this real?', 'should I reply to this?', 'who are these guys?'). If they ask for only one piece, such as domain age, still run the full sequence: each signal is weak alone, and together they usually settle the question."
 ---
 
 # Vetting a counterparty
@@ -36,22 +36,15 @@ Read the returned markup, not just the prose. In a fabricated site, the best evi
 
 ## Step 2: Domain age and registration
 
-`whois` on port 43 is often blocked or times out in Claude's code sandbox. Use RDAP over HTTPS instead. It is faster and returns structured JSON:
+`whois` on port 43 is often blocked or times out in Claude's code sandbox. Use RDAP over HTTPS instead, because it is faster and returns structured data. Run the script in this skill's `scripts/` folder:
 
 ```bash
-curl -s --max-time 30 "https://rdap.verisign.com/com/v1/domain/EXAMPLE.com" | python3 -c "
-import json,sys
-d=json.load(sys.stdin)
-print('name:', d.get('ldhName'))
-for e in d.get('events',[]): print(' ', e['eventAction'], e['eventDate'])
-for n in d.get('nameservers',[]): print('  NS:', n.get('ldhName'))
-print('status:', d.get('status'))
-"
+python3 ${CLAUDE_SKILL_DIR}/scripts/rdap.py EXAMPLE.com
 ```
 
-Verisign's endpoint covers `.com` and `.net`. For `.net`, change `/com/` to `/net/` in the path. For other TLDs, use `https://rdap.org/domain/EXAMPLE.tld`, which redirects to the right registry.
+The script asks Verisign's RDAP server about `.com` and `.net` domains, and rdap.org about all others. rdap.org redirects to the right registry. The script prints the registrar, the registration events, the nameservers and the status.
 
-If the sandbox can't reach these hosts, search the web for the domain's registration record and cite the source you used. If that fails too, report the domain's age as unverified and say why. Don't estimate it.
+If the script reports a failure, or says that rdap.org has no record, search the web for the domain's registration record. Cite the source you used. If that fails too, report the domain's age as unverified and say why. Don't estimate it.
 
 What to read from the result:
 
@@ -64,19 +57,13 @@ Run RDAP on every related domain you find in Step 4. Registration dates in a tig
 
 ## Step 3: Mail infrastructure
 
-Query DNS over HTTPS, because the sandbox often lacks `dig`:
+Query DNS over HTTPS, because the sandbox often lacks `dig`. The script in this skill's `scripts/` folder asks Cloudflare's public resolver for the MX, TXT and A records. It then asks for the TXT record at `_dmarc.EXAMPLE.com`, where DMARC lives:
 
 ```bash
-for t in MX TXT A; do echo "=== $t ==="; curl -s --max-time 15 \
-  -H "accept: application/dns-json" \
-  "https://cloudflare-dns.com/dns-query?name=EXAMPLE.com&type=$t" | python3 -c "
-import json,sys
-d=json.load(sys.stdin)
-for a in d.get('Answer',[]): print(' ', a['data'][:200])
-"; done
+python3 ${CLAUDE_SKILL_DIR}/scripts/dns.py EXAMPLE.com
 ```
 
-The TXT answer shows SPF. DMARC lives at `_dmarc.EXAMPLE.com`, so run the TXT query once more with that name. If the sandbox blocks these requests, report the mail records as unchecked.
+The domain's own TXT answer shows SPF. `(none)` means the resolver answered with no records. `lookup failed` means the query got no answer, so report those records as unchecked. An MX record of `0 .` is a null MX: the domain states that it accepts no mail.
 
 Interpretation:
 

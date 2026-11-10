@@ -9,7 +9,8 @@ Public repository of Claude plugins by Smirnov Labs, published to Anthropic's pl
    - `icon.png` at the plugin root.
    - `README.md` of at least 40 words outside code blocks, covering what the plugin does, how to use it and what data it sends. The directory shows it as the listing description.
    - `LICENSE`.
-   - `skills/<skill>/SKILL.md`, where the folder name matches the skill's `name`.
+   - `skills/<skill>/SKILL.md`, where the folder name matches the skill's `name`. Put its `description` in double quotes: the directory's YAML parser flags an unquoted value that contains a colon followed by a space.
+   - Any code the skill runs, in `skills/<skill>/scripts/`, called as `python3 ${CLAUDE_SKILL_DIR}/scripts/<file>`. The directory flags a download piped into an interpreter, such as `curl ... | python3`, as download-and-execute.
 2. Add the plugin to `.claude-plugin/marketplace.json` with `"source": "./plugins/<name>"`.
 3. Add a row to the table in `README.md`. Its button links to `https://claude.ai/customize/plugins/new?marketplace=issmirnov/claude-skills&plugin=<name>`.
 4. Run `claude plugin validate .` and `claude plugin validate --profile directory --strict ./plugins/<name>`.
